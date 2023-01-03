@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 using Supermarket.Models;
 
 namespace Supermarket.Data;
@@ -9,9 +11,10 @@ public class ApplicationDbContext : IdentityDbContext
    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
    			: base(options)
    		{
-   			//Database.EnsureDeleted();
+
+	        //Database.EnsureDeleted();
    			Database.EnsureCreated();
-   
+			
    			if (!ProductCategory.Any())
            {
                ProductCategory phones = new ProductCategory { Name = "Телефони" };
@@ -31,7 +34,14 @@ public class ApplicationDbContext : IdentityDbContext
                Product.AddRange(user1, user2, user3, user4, user5, user6, user7, user8);
                SaveChanges();
            }
+            
    		}
+	   protected override void OnModelCreating(ModelBuilder modelBuilder)
+	   {
+		   base.OnModelCreating(modelBuilder);
+		   modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
+	   }
+
    		public DbSet<Product> Product { get; set; } = default!;
    		public DbSet<ProductCategory> ProductCategory { get; set; } = default!;
 }

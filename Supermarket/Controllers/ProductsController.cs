@@ -23,41 +23,41 @@ namespace Supermarket.Controllers
 		{
 			int pageSize = 5;
         
-			IQueryable<Product> users = _context.Product.Include(x => x.ProductCategory);
+			IQueryable<Product> products = _context.Product.Include(x => x.ProductCategory);
  
 			if (company != 0)
 			{
-				users = users.Where(p => p.ProductCategoryId == company);
+				products = products.Where(p => p.ProductCategoryId == company);
 			}
 			if (!string.IsNullOrEmpty(name))
 			{
-				users = users.Where(p => p.Name!.Contains(name));
+				products = products.Where(p => p.Name!.Contains(name));
 			}
         
 			switch (sortOrder)
 			{
 				case SortState.NameDesc:
-					users = users.OrderByDescending(s => s.Name);
+					products = products.OrderByDescending(s => s.Name);
 					break;
 				case SortState.AgeAsc:
-					users = users.OrderBy(s => s.Price);
+					products = products.OrderBy(s => s.Price);
 					break;
 				case SortState.AgeDesc:
-					users = users.OrderByDescending(s => s.Price);
+					products = products.OrderByDescending(s => s.Price);
 					break;
 				case SortState.CompanyAsc:
-					users = users.OrderBy(s => s.ProductCategory!.Name);
+					products = products.OrderBy(s => s.ProductCategory!.Name);
 					break;
 				case SortState.CompanyDesc:
-					users = users.OrderByDescending(s => s.ProductCategory!.Name);
+					products = products.OrderByDescending(s => s.ProductCategory!.Name);
 					break;
 				default:
-					users = users.OrderBy(s => s.Name);
+					products = products.OrderBy(s => s.Name);
 					break;
 			}
         
-			var count = await users.CountAsync();
-			var items = await users.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+			var count = await products.CountAsync();
+			var items = await products.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         
 			IndexViewModel viewModel = new IndexViewModel(
 				items,

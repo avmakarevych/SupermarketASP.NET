@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupermarketAPI.Data;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace SupermarketAPI
 {
@@ -112,6 +113,20 @@ namespace SupermarketAPI
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+        }
+
+        [HttpPatch]
+        public IActionResult Patch(int id, [FromBody]JsonPatchDocument<Product> patch)
+        {
+            var product = _context.Product.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            patch.ApplyTo(product);
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
         // DELETE: api/Product/5
